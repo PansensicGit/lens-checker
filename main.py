@@ -28,6 +28,7 @@ def retrieveItems(path,ignoreItems=[
     'bin',
     'tmp',
     '.git',
+    '.github'
 ]):
     item = []
 
