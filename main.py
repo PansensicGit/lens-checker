@@ -28,7 +28,8 @@ def retrieveItems(path,ignoreItems=[
     'bin',
     'tmp',
     '.git',
-    '.github'
+    '.github',
+    'lenses-checker'
 ]):
     item = []
 
