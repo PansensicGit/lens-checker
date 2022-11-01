@@ -84,6 +84,32 @@ def compileRegex(regexPattern):
     except re.error:
         raise Exception("Invalid regex: '{}'".format(regexPattern))
 
+def convertPhraseSyntaxToText(phrase):
+    # 1. Asterisk: * represents a wild card for any alphanumeric characters - I suggest substituting simply "abc".
+    # 2. Alphabetic characters: [a] represents any single letter, [aa] represents any 2 letters, [aaa] represents any 3 letters - if you simply strip out the square brackets that will work fine in this case.
+    # 3. Numeric characters: similar to above, [n] represents any digit, [nn] represents any 2 digits, etc - here the "n"s need replacing with digits, say "1"s, then the square brackets dropped.
+
+    #anxi* about the change[a]
+    #amalgamat*
+    #chang* * needed
+    #cop* with change
+    #de[a]merger
+
+    phrase = phrase.replace('*', 'abc')
+    phrase = phrase.replace('[a]', 'a')
+    phrase = phrase.replace('[aa]', 'ab')
+    phrase = phrase.replace('[aaa]', 'abc')
+    phrase = phrase.replace('[n]', '1')
+    phrase = phrase.replace('[nn]', '11')
+    phrase = phrase.replace('[nnn]', '111')
+
+    return phrase
+
+def findMatchUsingRegex(regexPattern, phrase):
+    if re.search(regexPattern, phrase):
+        return True
+    return False
+
 if __name__ == "__main__":
     cwd = os.getcwd()
 
@@ -147,9 +173,14 @@ if __name__ == "__main__":
                     for regexItem in regexs:
                         regexPattern = regexItem.get('regex')
                         phrase = regexItem.get('phrase')
-                        compileRegex(regexPattern)
+
+                        sampleComment = convertPhraseSyntaxToText(phrase)
+                        matches = findMatchUsingRegex(regexPattern,sampleComment)
+
+                        # print("Regex: '{}' Phrase: '{}' Sample Comment: '{}' Matches: '{}'".format(regexPattern, phrase, sampleComment, matches))   
+
+                        if not matches:
+                            raise Exception("Regex does not match phrase: '{}'".format(regexPattern))
 
             else:
                 raise Exception("bucket yaml is incorrect for '{}'".format(bucket))
-
-                
