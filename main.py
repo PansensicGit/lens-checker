@@ -105,7 +105,7 @@ def convertPhraseSyntaxToText(phrase):
 
     return phrase
 
-def findMatchUsingRegex(regexPattern, phrase):
+def isMatchFound(regexPattern, phrase):
     if re.search(regexPattern, phrase):
         return True
     return False
@@ -175,7 +175,7 @@ if __name__ == "__main__":
                         phrase = regexItem.get('phrase')
 
                         sampleComment = convertPhraseSyntaxToText(phrase)
-                        matches = findMatchUsingRegex(regexPattern,sampleComment)
+                        matches = isMatchFound(regexPattern,sampleComment)
 
                         # print("Regex: '{}' Phrase: '{}' Sample Comment: '{}' Matches: '{}'".format(regexPattern, phrase, sampleComment, matches))   
 
