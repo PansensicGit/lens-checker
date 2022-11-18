@@ -103,6 +103,14 @@ def convertPhraseSyntaxToText(phrase):
     phrase = phrase.replace('[nn]', '11')
     phrase = phrase.replace('[nnn]', '111')
 
+    phrase = phrase.replace('-', 'H') \
+        .replace("'", 'A') \
+        .replace("`", 'A') \
+        .replace('&', 'X') \
+        .replace('. ', ' F ') \
+        .replace('!', ' E ') \
+        .replace('?', ' Q ')
+
     return phrase
 
 def isMatchFound(regexPattern, phrase):
@@ -151,6 +159,9 @@ if __name__ == "__main__":
                 bucketStats = bucketsYamlContents.get('bucketStats')
                 bucketInfo = bucketsYamlContents.get('bucketInfo')
 
+                # print(bucket)
+                # print(bucketStats)
+
                 if bucketStats:
                     defaultRegexWeight = bucketStats.get('defaultRegexWeight')
                     multiplier = bucketStats.get('multiplier')
@@ -175,12 +186,12 @@ if __name__ == "__main__":
                         phrase = regexItem.get('phrase')
 
                         sampleComment = convertPhraseSyntaxToText(phrase)
-                        matches = isMatchFound(regexPattern,sampleComment)
-
-                        # print("Regex: '{}' Phrase: '{}' Sample Comment: '{}' Matches: '{}'".format(regexPattern, phrase, sampleComment, matches))   
+                        # sampleCommentTrimmed = sampleComment.strip()
+                        sampleCommentWithSpaceAndBlankWord = sampleComment + " blankword"
+                        matches = isMatchFound(regexPattern,sampleCommentWithSpaceAndBlankWord)
 
                         if not matches:
-                            raise Exception("Regex does not match phrase: '{}'".format(regexPattern))
+                            raise Exception("Regex does not match phrase. Lens: '{}' Regex: '{}' Phrase: '{}' Sample Comment: '{}' Matches: '{}'".format(lens, regexPattern, phrase, sampleCommentWithSpaceAndBlankWord, matches))
 
             else:
                 raise Exception("bucket yaml is incorrect for '{}'".format(bucket))
