@@ -29,7 +29,7 @@ def retrieveItems(path,ignoreItems=[
     'tmp',
     '.git',
     '.github',
-    'lenses-checker'
+    'lens-checker'
 ]):
     item = []
 
@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
     lenses = retrieveItems(cwd)
     print(lenses)
-    
+
     checkForDuplicates(lenses)
 
     if len(lenses) == 0:
