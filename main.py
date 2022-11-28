@@ -134,6 +134,8 @@ if __name__ == "__main__":
     cwd = os.getcwd()
 
     lenses = retrieveItems(cwd)
+    print(lenses)
+    
     checkForDuplicates(lenses)
 
     if len(lenses) == 0:
