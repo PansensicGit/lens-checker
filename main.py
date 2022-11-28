@@ -54,6 +54,10 @@ def checkForDuplicates(item):
         raise Exception("Duplicate item found: '{}'".format(duplicates))
     return item
 
+def checkIfString(value):
+    if not isinstance(value, str):
+        raise Exception("value is not a string: '{}'".format(value))
+
 def checkFileExists(path):
     return os.path.isfile(path)
 
@@ -61,6 +65,14 @@ def loadYamlFile(path):
     yaml=YAML(typ='safe')
     with io.open(path, 'r', encoding='utf8') as stream:
         return yaml.load(stream)
+
+def checkIfFloat(value):
+    if not isinstance(value, float):
+        raise Exception("value is not a float: '{}'".format(value))
+
+def checkIfFloatOrInteger(value):
+    if not isinstance(value, float) and not isinstance(value, int):
+        raise Exception("value is not a float or integer: '{}'".format(value))
 
 def checkIfInteger(value):
     if not isinstance(value, int):
@@ -96,12 +108,12 @@ def convertPhraseSyntaxToText(phrase):
     #de[a]merger
 
     phrase = phrase.replace('*', 'abc')
-    phrase = phrase.replace('[a]', 'a')
-    phrase = phrase.replace('[aa]', 'ab')
-    phrase = phrase.replace('[aaa]', 'abc')
-    phrase = phrase.replace('[n]', '1')
-    phrase = phrase.replace('[nn]', '11')
-    phrase = phrase.replace('[nnn]', '111')
+
+    #replace any number of a's in a squared bracket with the same number of a's
+    phrase = re.sub(r'\[a+\]', lambda m: 'a' * (len(m.group(0))-2), phrase)
+
+    #replace any nubmer of n's in a squared bracket with the same number of 1's
+    phrase = re.sub(r'\[n+\]', lambda m: '1' * (len(m.group(0))-2), phrase)
 
     phrase = phrase.replace('-', 'H') \
         .replace("'", 'A') \
@@ -184,14 +196,29 @@ if __name__ == "__main__":
                     for regexItem in regexs:
                         regexPattern = regexItem.get('regex')
                         phrase = regexItem.get('phrase')
+                        weight = regexItem.get('weight')
+
+                        if phrase:
+                            checkIfString(phrase)
+
+                        if regexPattern:
+                            checkIfString(regexPattern)
+
+                        if weight:
+                            checkIfFloatOrInteger(weight)
 
                         sampleComment = convertPhraseSyntaxToText(phrase)
-                        # sampleCommentTrimmed = sampleComment.strip()
-                        sampleCommentWithSpaceAndBlankWord = sampleComment + " blankword"
-                        matches = isMatchFound(regexPattern,sampleCommentWithSpaceAndBlankWord)
 
+                        #dont include any spaces or words after the phrase if the last character is a number, as its valid in k2o
+                        if phrase[-1].isdigit():
+                            matches = isMatchFound(regexPattern,sampleComment)
+                        else:
+                            sampleCommentWithSpaceAndBlankWord = sampleComment + " blankword"
+                            matches = isMatchFound(regexPattern,sampleCommentWithSpaceAndBlankWord)
+
+                        #If the regex matches the sample comment, then the regex for matches
                         if not matches:
-                            raise Exception("Regex does not match phrase. Lens: '{}' Regex: '{}' Phrase: '{}' Sample Comment: '{}' Matches: '{}'".format(lens, regexPattern, phrase, sampleCommentWithSpaceAndBlankWord, matches))
+                                raise Exception("Regex does not match phrase. Lens: '{}' Bucket: '{}' Regex: '{}' Phrase: '{}' Sample Comment: '{}' Matches: '{}'".format(lens, bucketName, regexPattern, phrase, sampleCommentWithSpaceAndBlankWord, matches))
 
             else:
                 raise Exception("bucket yaml is incorrect for '{}'".format(bucket))
