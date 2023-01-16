@@ -47,7 +47,15 @@ def checkLensName(lens):
     if not re.match(r'^\d+\s', lens):
         raise Exception("Lens does not start with a number: '{}'".format(lens))
 
-def checkForDuplicates(item):
+#the format will be 194 Emotion Recognition
+def checkForDuplicatesByIdPrefix(items):
+    seen = set()
+    duplicates = set(x for x in items if x.split(' ', 1)[0] in seen or seen.add(x.split(' ', 1)[0]))
+    if len(duplicates) > 0:
+        raise Exception("Duplicate item found: '{}'".format(duplicates))
+    return items
+
+def checkForDuplicatesByName(item):
     seen = set()
     duplicates = set(x for x in item if x in seen or seen.add(x))
     if len(duplicates) > 0:
@@ -136,7 +144,8 @@ if __name__ == "__main__":
     lenses = retrieveItems(cwd)
     print(lenses)
 
-    checkForDuplicates(lenses)
+    checkForDuplicatesByName(lenses)
+    checkForDuplicatesByIdPrefix(lenses)
 
     if len(lenses) == 0:
         raise Exception("No lenses found")
@@ -165,7 +174,9 @@ if __name__ == "__main__":
             if bucket.endswith('lens.yaml'):
                 buckets.remove(bucket)
 
-        checkForDuplicates(buckets)
+        checkForDuplicatesByName(buckets)
+        checkForDuplicatesByIdPrefix(buckets)
+
         for bucket in buckets:
             bucketsYamlContents = loadYamlFile(bucket)
             if bucketsYamlContents:
