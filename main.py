@@ -178,7 +178,9 @@ if __name__ == "__main__":
 
         bucketWithoutLensName = []
         for bucket in buckets:
-            bucketWithoutLensName.append(bucket.replace(lens + os.sep, ''))
+            nameWithoutPrefix = bucket.replace(lens + os.sep, '')
+            nameWithoutPrefix = nameWithoutPrefix.replace('Just ', '')
+            bucketWithoutLensName.append(nameWithoutPrefix)
         checkForDuplicatesByIdPrefix(bucketWithoutLensName)
 
         for bucket in buckets:
