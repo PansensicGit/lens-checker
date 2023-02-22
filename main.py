@@ -52,14 +52,14 @@ def checkForDuplicatesByIdPrefix(items):
     seen = set()
     duplicates = set(x for x in items if x.split(' ', 1)[0] in seen or seen.add(x.split(' ', 1)[0]))
     if len(duplicates) > 0:
-        raise Exception("Duplicate item found: '{}'".format(duplicates))
+        raise Exception("Duplicate item id found: '{}'".format(duplicates))
     return items
 
 def checkForDuplicatesByName(item):
     seen = set()
     duplicates = set(x for x in item if x in seen or seen.add(x))
     if len(duplicates) > 0:
-        raise Exception("Duplicate item found: '{}'".format(duplicates))
+        raise Exception("Duplicate item name found: '{}'".format(duplicates))
     return item
 
 def checkIfString(value):
@@ -175,7 +175,11 @@ if __name__ == "__main__":
                 buckets.remove(bucket)
 
         checkForDuplicatesByName(buckets)
-        checkForDuplicatesByIdPrefix(buckets)
+
+        bucketWithoutLensName = []
+        for bucket in buckets:
+            bucketWithoutLensName.append(bucket.replace(lens + os.sep, ''))
+        checkForDuplicatesByIdPrefix(bucketWithoutLensName)
 
         for bucket in buckets:
             bucketsYamlContents = loadYamlFile(bucket)
