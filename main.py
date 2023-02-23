@@ -182,6 +182,7 @@ if __name__ == "__main__":
             nameWithoutPrefix = nameWithoutPrefix.replace('Just ', '')
             bucketWithoutLensName.append(nameWithoutPrefix)
 
+        print("Lens Name: '{}'".format(lens))
         print(bucketWithoutLensName)
         checkForDuplicatesByIdPrefix(bucketWithoutLensName)
 
