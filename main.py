@@ -130,6 +130,10 @@ def convertPhraseSyntaxToText(phrase):
         .replace('. ', ' F ') \
         .replace('!', ' E ') \
         .replace('?', ' Q ')
+    
+    #remove the space after the phrase if its a number
+    if phrase[-1] == ' ' and phrase[-2].isdigit():
+        phrase = phrase[:-1]
 
     return phrase
 
